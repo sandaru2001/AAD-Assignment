@@ -63,8 +63,10 @@
             </div>
 
             <div class="col-lg-12 mt-5">
-                <button class="btn btn-danger" id="Submit" >Add Data</button>
-                <button class="btn btn-primary" id="Update" >Update</button>
+                <button type="button" class="btn btn-success" id="Submit" >Add Data</button>
+                <button type="button" class="btn btn-primary" id="update" >Update</button>
+                <button type="button" class="btn btn-danger" id="delete" >Delete</button>
+                <button type="button" class="btn btn-warning" id="reset" >Rest</button>
             </div>
 
         </div>
@@ -79,10 +81,9 @@
                        <th>Name</th>
                        <th>Address</th>
                        <th>Contact</th>
-                       <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody id="customer-tbl-body"></tbody>
             </table>
         </div>
     </div>
@@ -91,6 +92,8 @@
 <script src="../assests/lib/jQuery/jquery-3.6.4.min.js"></script>
 
 <script>
+    loadAllCustomer();
+
     $("#Submit").on("click", function () {
         let cus_id = $("#id").val();
         let name = $("#name").val();
@@ -118,6 +121,49 @@
         console.log(custJSON)
         sendAjax(custJSON);
     })
+
+    $("#Update").on("click", function () {
+        let cus_id = $("#id").val();
+        let name = $("#name").val();
+        let address = $("#address").val();
+        let contact = $("#contact").val();
+
+        const customer = {
+            id: cus_id,
+            name: name,
+            address: address,
+            contact: contact
+        };
+
+        const custJSON = JSON.stringify(customer);
+        console.log(custJSON)
+
+        const sendAjax = (custJSON) => {
+            $.ajax({
+                url: "http://localhost:8080/AAD_Assignment_1/customer",
+                type: "PUT",
+                data: custJSON,
+                contentType: "application/json"
+            });
+        };
+        console.log(custJSON)
+        sendAjax(custJSON);
+    })
+
+
+    function loadAllCustomer() {
+        $("#customer-tbl-body").empty();
+        $.ajax({
+            url: "http://localhost:8080/AAD_Assignment_1/customer",
+            type: "GET",
+            success: function (response) {
+                for (const customer of response){
+                    let record = `<tr><td class="cus_id">${customer.id}</td><td class="name">${customer.name}</td><td class="nic">${customer.address}</td><td class="address">${customer.contact}</td></tr>`;
+                    $("#customer-tbl-body").append(record);
+                }
+            }
+        })
+    }
 </script>
 
 </body>

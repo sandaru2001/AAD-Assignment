@@ -1,6 +1,5 @@
 package lk.ijse.aadassignment1.db;
 
-import lk.ijse.aadassignment1.dto.CustomerDTO;
 import lk.ijse.aadassignment1.dto.ItemDTO;
 
 import java.sql.Connection;
@@ -42,6 +41,39 @@ public class ItemDB {
                 itemDTOS.add(itemDTO);
             }
             return itemDTOS;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean updateItem(ItemDTO itemDTO, Connection connection){
+        try {
+            var ps = connection.prepareStatement("UPDATE item SET itemName = ?, itemQty = ?, itemPrice = ? WHERE itemCode = ?");
+            ps.setString(1, itemDTO.getName());
+            ps.setInt(2, Integer.parseInt(itemDTO.getQuantity()));
+            ps.setDouble(3, Double.parseDouble(itemDTO.getPrice()));
+            ps.setString(4, itemDTO.getCode());
+
+            if (ps.executeUpdate() != 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean deleteItem(String code, Connection connection){
+        try {
+            var ps = connection.prepareStatement("DELETE FROM item WHERE itemCode = ?");
+            ps.setString(1, code);
+
+            if (ps.executeUpdate() != 0) {
+                return true;
+            } else {
+                return false;
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

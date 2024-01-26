@@ -46,4 +46,37 @@ public class CustomerDB {
             throw new RuntimeException(e);
         }
     }
+
+    public boolean updateCustomer(CustomerDTO customerDTO, Connection connection){
+        try {
+            var ps = connection.prepareStatement("UPDATE customer SET custName = ?, custAddress = ?, custContact = ? WHERE custId = ?");
+            ps.setString(1, customerDTO.getName());
+            ps.setString(2, customerDTO.getAddress());
+            ps.setString(3, customerDTO.getContact());
+            ps.setString(4, customerDTO.getId());
+
+            if (ps.executeUpdate() != 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean deleteCustomer(String id, Connection connection) {
+        try {
+            var ps = connection.prepareStatement("DELETE FROM customer WHERE custId = ?");
+            ps.setString(1, id);
+
+            if (ps.executeUpdate() != 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
