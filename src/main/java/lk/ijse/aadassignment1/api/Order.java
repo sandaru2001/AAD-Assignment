@@ -1,6 +1,8 @@
 package lk.ijse.aadassignment1.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,5 +42,26 @@ public class Order extends HttpServlet {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
         resp.getWriter().write(jsonResult);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Jsonb jsonb = JsonbBuilder.create();
+        OrderDetailDTO orderDetailDTO = jsonb.fromJson(req.getReader(), OrderDetailDTO.class);
+
+        resp.getWriter().write("Came Json Object Successfully!");
+
+        System.out.println(orderDetailDTO.getOrderId());
+        System.out.println(orderDetailDTO.getItemId());
+        System.out.println(orderDetailDTO.getPrice());
+        System.out.println(orderDetailDTO.getQty());
+
+        OrderDetailDB orderDetailDB = new OrderDetailDB();
+        boolean result = orderDetailDB.saveOrderDetails(orderDetailDTO, connection);
+        if (result) {
+            resp.setStatus(HttpServletResponse.SC_OK);
+        } else {
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
     }
 }
